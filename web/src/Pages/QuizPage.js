@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { WeTestIcon } from "../Components/Icon";
 import QuestionComponent from "../Components/QuestionType";
 import ScorePopup from "../Components/ScorePopup";
@@ -10,6 +11,7 @@ const QuizPage = () => {
   const [showScorePopup, setShowScorePopup] = useState(false);
   const [scoreData, setScoreData] = useState(null);
   const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const fetchQuestions = async () => {
     try {
@@ -17,7 +19,7 @@ const QuizPage = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include the token
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await response.json();
@@ -67,11 +69,22 @@ const QuizPage = () => {
     setAnswers({});
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="w-16 bg-indigo-600 flex flex-col items-center py-4">
         <WeTestIcon />
         <span className="mt-2 text-white font-semibold text-xs">weTest</span>
+        <button
+          onClick={handleLogout}
+          className="mt-auto mb-4 text-white px-2 py-1 bg-red-500 rounded hover:bg-red-600"
+        >
+          Logout
+        </button>
       </div>
       <div className="flex-1 p-8">
         <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
