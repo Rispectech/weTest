@@ -10,7 +10,7 @@ const registerUser = async (body) => {
 
   const user = { email, name };
   const accessToken = createAccessToken(user);
-  return { message: "User registered successfully", data: accessToken };
+  return { message: "User registered successfully", token: accessToken };
 };
 
 const loginUser = async (body) => {
@@ -32,7 +32,7 @@ const loginUser = async (body) => {
   // Create JWT Access Token
   const accessToken = createAccessToken({ id: user.id, email: user.email, name });
 
-  return { error: false, data: accessToken };
+  return { error: false, token: accessToken };
 };
 
 module.exports = { loginUser, registerUser };

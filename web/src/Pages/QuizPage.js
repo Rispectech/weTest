@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { WeTestIcon } from "../Components/Icon";
 import QuestionComponent from "../Components/QuestionType";
 import ScorePopup from "../Components/ScorePopup";
+import { AuthContext } from "../context/context";
 
 const QuizPage = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [showScorePopup, setShowScorePopup] = useState(false);
   const [scoreData, setScoreData] = useState(null);
+  const { token } = useContext(AuthContext);
 
   const fetchQuestions = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/questions");
+      const response = await fetch("http://localhost:5000/api/questions", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include the token
+        },
+      });
       const data = await response.json();
       setQuestions(data);
     } catch (error) {

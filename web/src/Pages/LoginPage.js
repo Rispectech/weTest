@@ -1,15 +1,34 @@
 // LoginPage.js
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/context";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+    try {
+      const response = await fetch("http://localhost:5000/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: username, password }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        console.log("working");
+        login({ token: data.data.token });
+      }
+    } catch (err) {
+      console.error("Error logging in:", err);
+    }
     navigate("/quiz");
   };
 
@@ -21,7 +40,7 @@ function LoginPage() {
             Sign in to weTest
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6" onSubmit={(e) => handleSubmit(e)}>
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
