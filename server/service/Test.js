@@ -62,9 +62,12 @@ const gradeQuestions = async (body) => {
     };
   });
 
+  console.log(results);
+
   return {
     totalSum: results.reduce((acc, val) => {
-      return acc + val.isCorrect ? val.score : 0;
+      console.log(acc, val);
+      return acc + (val.isCorrect ? val.score : 0);
     }, 0),
     results,
   };

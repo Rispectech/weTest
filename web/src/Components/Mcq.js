@@ -11,6 +11,7 @@ const Mcq = ({ question, value, onChange }) => {
               type="radio"
               name={`question-${question.id}`}
               value={optionText}
+              required
               checked={value === optionText}
               onChange={() => onChange(optionText)}
               className="form-radio h-4 w-4 text-blue-600"

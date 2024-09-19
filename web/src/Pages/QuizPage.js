@@ -10,7 +10,7 @@ const QuizPage = () => {
   const [answers, setAnswers] = useState({});
   const [showScorePopup, setShowScorePopup] = useState(false);
   const [scoreData, setScoreData] = useState(null);
-  const { token } = useContext(AuthContext);
+  const { token, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const fetchQuestions = async () => {
@@ -51,6 +51,7 @@ const QuizPage = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formattedAnswers),
       });
@@ -76,7 +77,7 @@ const QuizPage = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="w-16 bg-indigo-600 flex flex-col items-center py-4">
+      <div className="w-32 bg-indigo-600 flex flex-col items-center py-4">
         <WeTestIcon />
         <span className="mt-2 text-white font-semibold text-xs">weTest</span>
         <button
