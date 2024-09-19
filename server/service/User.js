@@ -1,15 +1,14 @@
 const sequelize = require("../db/db");
+const { User } = require("../db/model");
 const { generateHash } = require("../utils/bcrypt");
 const { createAccessToken, createRefreshToken } = require("../utils/jwt");
 
-const registerUser = async (username, password) => {
+const registerUser = async (body) => {
+  const { name, password } = body;
   const hashedPassword = generateHash(password);
+  const newUser = await User.create({ name, email, password: hashedPassword });
 
-  const [result] = await sequelize.query("INSERT INTO users (email, password) VALUES (?, ?)", [
-    email,
-    hashedPassword,
-  ]);
-  const user = { id: result.insertId, email };
+  const user = { id: newUser.id, email, username };
   const accessToken = createAccessToken(user);
-  const refreshToken = createRefreshToken(user);
+  res.status(201).json({ message: "User registered successfully", userId: newUser.id });
 };

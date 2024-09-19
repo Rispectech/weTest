@@ -1,57 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { WeTestIcon } from "../Components/Icon";
 import QuestionComponent from "../Components/QuestionType";
 import ScorePopup from "../Components/ScorePopup";
 
 const QuizPage = () => {
-  const questions = [
-    {
-      id: 1,
-      type: "1",
-      text: "What is the capital of France?",
-      options: {
-        1: "London",
-        2: "Berlin",
-        3: "Paris",
-        4: "Madrid",
-      },
-      correct_answer: "3",
-    },
-    {
-      id: 2,
-      type: "1",
-      text: "Is the Earth flat?",
-      options: {
-        1: "True",
-        2: "False",
-      },
-      correct_answer: "2",
-    },
-    {
-      id: 3,
-      type: "2",
-      text: "The largest planet in our solar system is _______.",
-      options: null,
-      correct_answer: "Jupiter",
-    },
-    {
-      id: 4,
-      type: "3",
-      text: "Explain the concept of gravity in your own words.",
-      options: null,
-      correct_answer: null,
-    },
-  ];
-
+  const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [showScorePopup, setShowScorePopup] = useState(false);
   const [scoreData, setScoreData] = useState(null);
+
+  const fetchQuestions = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/questions");
+      const data = await response.json();
+      setQuestions(data);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
 
   const handleAnswerChange = (questionId, value) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formattedAnswers = {
       answers: Object.entries(answers).map(([questionId, userAnswer]) => ({
@@ -59,7 +35,28 @@ const QuizPage = () => {
         userAnswer,
       })),
     };
-    console.log(formattedAnswers);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/grade", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedAnswers),
+      });
+
+      const data = await response.json();
+
+      setScoreData(data);
+      setShowScorePopup(true);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  const handleCloseScorePopUp = () => {
+    setShowScorePopup(false);
+    setAnswers({});
   };
 
   return (
@@ -83,7 +80,9 @@ const QuizPage = () => {
                   <QuestionComponent
                     question={question}
                     value={answers[question.id] || ""}
-                    onChange={(value) => handleAnswerChange(question.id, value)}
+                    onChange={(value, text = "") =>
+                      handleAnswerChange(question.id, value, text)
+                    }
                   />
                 </div>
               ))}
@@ -99,9 +98,7 @@ const QuizPage = () => {
           </form>
         </div>
       </div>
-      {showScorePopup && (
-        <ScorePopup scoreData={scoreData} onClose={() => setShowScorePopup(false)} />
-      )}
+      {showScorePopup && <ScorePopup scoreData={scoreData} onClose={handleCloseScorePopUp} />}
     </div>
   );
 };

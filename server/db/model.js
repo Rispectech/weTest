@@ -20,7 +20,7 @@ const Question = sequelize.define("questions", {
   type: {
     type: DataTypes.ENUM("1", "2", "3"),
     allowNull: false,
-    comment: "1: mcq, 2: fill-in-the-blank, 3: descriptive", // Comment in Sequelize
+    comment: "1: mcq, 2: fill-in-the-blank, 3: descriptive",
   },
   text: {
     type: DataTypes.TEXT,
@@ -28,14 +28,14 @@ const Question = sequelize.define("questions", {
   },
   options: {
     type: DataTypes.JSON,
-    allowNull: true, // Options are optional and used only for MCQ questions
+    allowNull: true,
   },
   correct_answer: {
     type: DataTypes.STRING,
-    allowNull: true, // Correct answer is optional for descriptive type
+    allowNull: true,
   },
   score: {
-    type: DataTypes.INTEGER, // Use INTEGER instead of NUMBER
+    type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 1,
   },
@@ -43,12 +43,11 @@ const Question = sequelize.define("questions", {
 
 const syncModels = async () => {
   try {
-    await sequelize.sync({ alter: true }); // `alter` updates the table structure if needed
+    await sequelize.sync({ alter: true });
     console.log("Models synchronized successfully.");
   } catch (error) {
     console.error("Error syncing models:", error);
   }
 };
 
-// Export the models
 module.exports = { User, syncModels, Question };

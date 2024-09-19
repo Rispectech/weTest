@@ -1,4 +1,3 @@
-// ScorePopup.js
 import React from "react";
 
 function ScorePopup({ scoreData, onClose }) {
@@ -15,11 +14,17 @@ function ScorePopup({ scoreData, onClose }) {
             <div className="mt-4">
               {scoreData.results.map((result) => (
                 <div key={result.questionId} className="mb-2 text-sm">
-                  <p>
+                  <p
+                    className={`font-medium ${
+                      result.isCorrect ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
                     Question {result.questionId}: {result.isCorrect ? "Correct" : "Incorrect"}
                   </p>
                   <p>Correct Answer: {result.correctAnswer}</p>
-                  <p>Score: {result.score}</p>
+                  <p>
+                    Score: {result.isCorrect ? result.score : 0} / {result.score}
+                  </p>
                 </div>
               ))}
             </div>

@@ -18,13 +18,12 @@ const getQuestions = async () => {
 };
 
 const gradeQuestions = async (body) => {
-  const { answers } = body; // answers should be an array of { questionId, userAnswer }
+  const { answers } = body;
 
   if (!Array.isArray(answers)) {
     return res.status(400).send("Invalid answers format");
   }
 
-  // Retrieve all the questions involved in the answers
   const questions = await Question.findAll({});
 
   const questionMap = new Map();
@@ -32,7 +31,6 @@ const gradeQuestions = async (body) => {
     questionMap.set(q.dataValues.id, q.dataValues);
   });
 
-  // Evaluate each answer
   const results = answers.map((answer) => {
     const question = questionMap.get(answer.questionId);
 
@@ -44,25 +42,24 @@ const gradeQuestions = async (body) => {
 
     let isCorrect = false;
 
-    // Grading logic for different question types
     if (question.type === "1") {
-      // MCQ
       let options = question.options;
 
       options = options?.options || [];
-      isCorrect =
-        question.correct_answer === answer.userAnswer && options.includes(answer.userAnswer);
+      isCorrect = question.correct_answer === answer.userAnswer;
     } else if (question.type === "2") {
-      // Fill-in-the-Blank
       isCorrect =
         question.correct_answer.toLowerCase().trim() ===
         answer.userAnswer.toLowerCase().trim();
     } else if (question.type === "3") {
-      // Descriptive
-      // Simple comparison, might need more advanced logic for actual descriptive grading
-      isCorrect =
-        question.correct_answer.toLowerCase().trim() ===
-        answer.userAnswer.toLowerCase().trim();
+      const correctWords = question.correct_answer.split(" ");
+      const userWords = answer.userAnswer.split(" ");
+
+      const matchingWords = userWords.filter((word) => correctWords.includes(word));
+      const percentage = (matchingWords.length / correctWords.length) * 100;
+
+      score = percentage >= 70 ? question.score : (percentage / 100) * question.score;
+      isCorrect = percentage >= 70;
     }
 
     return {
