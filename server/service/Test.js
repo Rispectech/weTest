@@ -3,10 +3,6 @@ const { Question } = require("../db/model");
 const addQuestion = async (body) => {
   const { type, text, options, correct_answer } = body;
 
-  if (!["1", "2", "3"].includes(type)) {
-    return res.status(400).send("Invalid type value");
-  }
-
   const question = await Question.create({ type, text, options, correct_answer });
 
   return question;
@@ -19,10 +15,6 @@ const getQuestions = async () => {
 
 const gradeQuestions = async (body) => {
   const { answers } = body;
-
-  if (!Array.isArray(answers)) {
-    return res.status(400).send("Invalid answers format");
-  }
 
   const questions = await Question.findAll({});
 
