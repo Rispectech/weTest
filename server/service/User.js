@@ -6,7 +6,6 @@ const { createAccessToken, createRefreshToken } = require("../utils/jwt");
 const registerUser = async (body) => {
   const { email, name, password } = body;
   const hashedPassword = await generateHash(password);
-  // const newUser = await User.create({ name, email, password: hashedPassword });
 
   const user = { email, name };
   const accessToken = createAccessToken(user);
