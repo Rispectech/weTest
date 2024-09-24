@@ -7,9 +7,11 @@ import { AuthContext } from "../context/context";
 
 const QuizPage = () => {
   const [questions, setQuestions] = useState([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showScorePopup, setShowScorePopup] = useState(false);
   const [scoreData, setScoreData] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(30);
   const { token, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -33,12 +35,37 @@ const QuizPage = () => {
     fetchQuestions();
   }, []);
 
+  useEffect(() => {
+    if (questions.length > 0 && currentQuestionIndex < questions.length) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime === 1) {
+            clearInterval(timer);
+            handleNextQuestion();
+            return 60;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [currentQuestionIndex, questions]);
+
   const handleAnswerChange = (questionId, value) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      setTimeLeft(60);
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = async () => {
     const formattedAnswers = {
       answers: Object.entries(answers).map(([questionId, userAnswer]) => ({
         questionId: parseInt(questionId),
@@ -61,19 +88,23 @@ const QuizPage = () => {
       setScoreData(data);
       setShowScorePopup(true);
     } catch (error) {
-      console.error("Error fetching questions:", error);
+      console.error("Error submitting answers:", error);
     }
   };
 
   const handleCloseScorePopUp = () => {
     setShowScorePopup(false);
     setAnswers({});
+    setCurrentQuestionIndex(0);
+    setTimeLeft(60);
   };
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -91,33 +122,34 @@ const QuizPage = () => {
         <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
           <div className="p-6 bg-gray-50 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-gray-800">Quiz</h2>
+            <p className="text-lg font-semibold text-gray-600 mt-2">
+              Time left: {timeLeft} seconds
+            </p>
           </div>
-          <form onSubmit={handleSubmit} className="p-6">
-            <div className="space-y-8">
-              {questions.map((question) => (
-                <div key={question.id} className="space-y-4">
-                  <h3 className="font-semibold text-lg text-gray-700">
-                    {question.id}. {question.text}
-                  </h3>
-                  <QuestionComponent
-                    question={question}
-                    value={answers[question.id] || ""}
-                    onChange={(value, text = "") =>
-                      handleAnswerChange(question.id, value, text)
-                    }
-                  />
-                </div>
-              ))}
+          {currentQuestion && (
+            <div className="p-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-lg text-gray-700">
+                  {currentQuestionIndex + 1}. {currentQuestion.text}
+                </h3>
+                <QuestionComponent
+                  question={currentQuestion}
+                  value={answers[currentQuestion.id] || ""}
+                  onChange={(value) => handleAnswerChange(currentQuestion.id, value)}
+                />
+              </div>
+              <div className="mt-8">
+                <button
+                  onClick={handleNextQuestion}
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
+                >
+                  {currentQuestionIndex < questions.length - 1
+                    ? "Next Question"
+                    : "Submit Quiz"}
+                </button>
+              </div>
             </div>
-            <div className="mt-8">
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out"
-              >
-                Submit Answers
-              </button>
-            </div>
-          </form>
+          )}
         </div>
       </div>
       {showScorePopup && <ScorePopup scoreData={scoreData} onClose={handleCloseScorePopUp} />}
