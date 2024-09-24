@@ -7,16 +7,20 @@ const registerUser = async (body) => {
   const { email, name, password } = body;
   const hashedPassword = await generateHash(password);
 
+  const userCreated = await User.create({ name, email, password: hashedPassword });
   const user = { email, name };
+
   const accessToken = createAccessToken(user);
   return { message: "User registered successfully", token: accessToken };
 };
 
 const loginUser = async (body) => {
   const { name, password } = body;
-  console.log(body);
+  // console.log(body);
 
   const user = await User.findOne({ where: { name } });
+
+  console.log("getting", user);
 
   if (!user) {
     return { error: true, message: "Invalid credentials" };

@@ -17,7 +17,7 @@ const QuizPage = () => {
 
   const fetchQuestions = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/questions", {
+      const response = await fetch("https://wetest.onrender.com/api/questions", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,7 @@ const QuizPage = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/grade", {
+      const response = await fetch("https://wetest.onrender.com/api/grade", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -21,5 +21,5 @@ app.listen(PORT, async () => {
   console.log(`Server is listening at port ${PORT}`);
   await sequelize.authenticate();
   console.log("Connection to the database has been established successfully.");
-  await syncModels();
+  // await syncModels();
 });
