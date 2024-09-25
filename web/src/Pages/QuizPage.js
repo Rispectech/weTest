@@ -30,9 +30,9 @@ const QuizPage = () => {
       console.error("Error fetching questions:", error);
     }
   };
-
   useEffect(() => {
     fetchQuestions();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -50,6 +50,7 @@ const QuizPage = () => {
 
       return () => clearInterval(timer);
     }
+    // eslint-disable-next-line
   }, [currentQuestionIndex, questions]);
 
   const handleAnswerChange = (questionId, value) => {
