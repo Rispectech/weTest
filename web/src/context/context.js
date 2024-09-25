@@ -22,7 +22,6 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => {
-    console.log(userData);
     localStorage.setItem("token", userData.token);
     dispatch({
       type: "LOGIN_SUCCESS",

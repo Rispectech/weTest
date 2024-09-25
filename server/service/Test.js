@@ -26,8 +26,6 @@ const gradeQuestions = async (body) => {
   const results = answers.map((answer) => {
     const question = questionMap.get(answer.questionId);
 
-    // console.log(question);
-
     if (!question) {
       return { questionId: answer.questionId, result: "Question not found" };
     }
@@ -62,11 +60,8 @@ const gradeQuestions = async (body) => {
     };
   });
 
-  console.log(results);
-
   return {
     totalSum: results.reduce((acc, val) => {
-      console.log(acc, val);
       return acc + (val.isCorrect ? val.score : 0);
     }, 0),
     results,

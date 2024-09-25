@@ -5,7 +5,7 @@ const Mcq = ({ question, value, onChange }) => {
   return (
     <div className="space-y-2">
       {question.options &&
-        Object.entries(question.options.options).map(([key, optionText]) => (
+        Object.entries(question.options).map(([key, optionText]) => (
           <label key={key} className="flex items-center space-x-2 cursor-pointer">
             <input
               type="radio"

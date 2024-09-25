@@ -20,9 +20,8 @@ function LoginPage() {
         body: JSON.stringify({ name: username, password }),
       });
       const data = await response.json();
-      console.log(data);
+
       if (response.ok) {
-        console.log("working");
         login({ token: data.data.token });
       }
     } catch (err) {

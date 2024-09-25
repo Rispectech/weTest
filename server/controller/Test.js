@@ -23,7 +23,6 @@ const getQuestionsController = async (req, res) => {
 const gradeQuestionsController = async (req, res) => {
   try {
     const results = await testService.gradeQuestions(req.body);
-    console.log(results);
     res.json(results);
   } catch (error) {
     console.error("Error grading answers:", error);

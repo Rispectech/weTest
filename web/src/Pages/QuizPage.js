@@ -105,7 +105,6 @@ const QuizPage = () => {
   };
 
   const currentQuestion = questions[currentQuestionIndex];
-
   return (
     <div className="flex min-h-screen bg-gray-100">
       <div className="w-32 bg-indigo-600 flex flex-col items-center py-4">
